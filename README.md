@@ -20,5 +20,11 @@ Le dossier `bvm-plan-3d/` contient le site de présentation de l'application BVM
 (HTML/CSS/JS statique, Three.js chargé depuis cdnjs). Il est indépendant de PROLIFIC et
 ne touche pas à `firebase-messaging-sw.js`.
 
-- Formulaire d'accès anticipé : renseigner l'attribut `data-endpoint` du formulaire
+- Formulaire de demande de démo : renseigner l'attribut `data-endpoint` du formulaire
   (`bvm-plan-3d/index.html`, ex. une URL Formspree) pour activer l'envoi.
+- Vidéos et captures : déposer les fichiers dans `bvm-plan-3d/media/` avec ces noms exacts.
+  Tant qu'un fichier manque, le site affiche un aperçu rendu en 3D à sa place.
+  - `visite-1.mp4` (+ `visite-1.jpg` en vignette), `visite-2.mp4` (+ `visite-2.jpg`)
+  - `vue-eclatee.jpg`, `vue-interieure.jpg`, `vue-dessus.jpg`
+- Design system : `design-system/bvm-plan-3d/MASTER.md` (généré avec ui-ux-pro-max,
+  ajusté à l'identité BVM).

@@ -114,7 +114,7 @@
   if (xp) {
     var tabs = $$('.xp-tab', xp), scrs = $$('.scr', xp), panes = $$('.pane', xp);
     var app = $('.app', xp), panel = $('#xp-panel'), caption = $('#xp-caption'), view = $('#app-view'), tabList = $('.xp-tabs', xp);
-    var VIEWS = ['Plan 2D', 'Aménagement', 'Finitions', 'Métrés', 'Dossier'];
+    var VIEWS = ['Modèles', 'Plan 2D', 'Devis'];
     var current = 0;
     var auto = !reduce;
     if (auto) xp.classList.add('is-auto');
@@ -164,11 +164,114 @@
     syncPause();
     show(0);
 
-    var shot = function (url) {
-      $$('.dos-img').forEach(function (img) { img.src = url; img.hidden = false; img.parentNode.classList.add('has-img'); });
+  }
+
+  /* ---------- Vignettes de modèles (galerie de l'étape 1) ---------- */
+  if (B.houseSVG) {
+    $$('[data-house]').forEach(function (el) {
+      var p = el.getAttribute('data-house').split(',');
+      var num = String(B.models.number(p[0], p[1], p[2])).padStart(2, '0');
+      el.innerHTML = B.houseSVG(p[0], p[1], p[2]) + '<span class="mg-n">Modèle ' + num + '</span><span class="mg-l">' + B.models.label(p[0], p[1], p[2]) + '</span>';
+    });
+  }
+
+  /* ---------- Configurateur de modèles (24 combinaisons) ---------- */
+  if (B.models && $('#modeles')) {
+    var pick = function (n) { var el = $('input[name="' + n + '"]:checked'); return el ? el.value : ''; };
+    var fb = $('#models-fallback');
+    var updModel = function () {
+      var lv = pick('lv'), gar = pick('gar'), roof = pick('roof');
+      var n = String(B.models.number(lv, gar, roof)).padStart(2, '0');
+      $('#mod-num').textContent = 'Modèle ' + n + ' / 24';
+      $('#mod-label').textContent = B.models.label(lv, gar, roof);
+      if (B.modelScene) B.modelScene.build(lv, gar, roof);
+      if (fb) fb.innerHTML = B.houseSVG(lv, gar, roof);
     };
-    if (B.snapshotURL) shot(B.snapshotURL);
-    document.addEventListener('bvm:snapshot', function (e) { shot(e.detail); });
+    $$('#modeles input[type="radio"]').forEach(function (inp) { inp.addEventListener('change', updModel); });
+    updModel();
+  }
+
+  /* ---------- Devis d'exemple, recalculé en direct ---------- */
+  if (B.quote) {
+    var rows = $('#dv-rows'), mini = $('#xp-quote'), shown = {};
+    var countTo = function (el, key, value) {
+      var from = shown[key + el.dataset.uid] == null ? value : shown[key + el.dataset.uid];
+      shown[key + el.dataset.uid] = value;
+      if (reduce || from === value) { el.textContent = B.money(value); return; }
+      var t0 = performance.now(), dur = 450;
+      (function tick(now) {
+        var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = B.money(from + (value - from) * e);
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    };
+    $$('[data-q]').forEach(function (el, i) { el.dataset.uid = String(i); });
+    var renderQuote = function (range, animate) {
+      var q = B.quote(range);
+      var max = Math.max.apply(null, q.lots.map(function (l) { return l.ht; }));
+      if (rows) {
+        if (!rows.children.length) {
+          rows.innerHTML = q.lots.map(function (l) {
+            return '<tr><th scope="row">' + l.name + '</th><td class="dv-bar"><i></i></td><td class="dv-amt"></td></tr>';
+          }).join('');
+        }
+        q.lots.forEach(function (l, i) {
+          var tr = rows.children[i];
+          tr.querySelector('.dv-bar i').style.transform = 'scaleX(' + (l.ht / max).toFixed(3) + ')';
+          var amt = tr.querySelector('.dv-amt');
+          amt.dataset.uid = 'lot' + i;
+          if (animate) countTo(amt, 'lot', l.ht); else { amt.textContent = B.money(l.ht); shown['lot' + amt.dataset.uid] = l.ht; }
+        });
+      }
+      $$('[data-q]').forEach(function (el) {
+        var v = q[el.dataset.q];
+        if (el.closest('#devis') && animate) countTo(el, el.dataset.q, v);
+        else { el.textContent = B.money(v); shown[el.dataset.q + el.dataset.uid] = v; }
+      });
+      return q;
+    };
+    if (mini) {
+      var base = B.quote('confort');
+      mini.innerHTML = base.lots.slice(0, 6).map(function (l) { return '<tr><td>' + l.name + '</td><td>' + B.money(l.ht) + '</td></tr>'; }).join('') +
+        '<tr class="more"><td>… ' + (base.lots.length - 6) + ' autres lots</td><td></td></tr>';
+    }
+    renderQuote('confort', false);
+    $$('input[name="gamme"]').forEach(function (inp) { inp.addEventListener('change', function () { renderQuote(inp.value, true); }); });
+  }
+
+  /* ---------- Vidéos et captures : vos fichiers, sinon aperçus rendus en 3D ---------- */
+  var mediaEls = $$('[data-media]');
+  if (mediaEls.length) {
+    var fallbacks = [];
+    var fillFallback = function (fig) {
+      var box = $('.media-box', fig), views = B.views || {};
+      var url = views[fig.dataset.shot];
+      box.innerHTML = (url ? '<img src="' + url + '" alt="' + (fig.dataset.alt || 'Aperçu de la maquette 3D') + '">' : '') +
+        (fig.dataset.media === 'video' ? '<span class="media-soon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Vidéo bientôt en ligne</span>' : '<span class="media-tag">Aperçu</span>');
+      fig.classList.add('is-fallback');
+    };
+    mediaEls.forEach(function (fig) {
+      var src = fig.dataset.src;
+      var ok = function () {
+        var box = $('.media-box', fig);
+        if (fig.dataset.media === 'video') {
+          var v = document.createElement('video');
+          v.controls = true; v.playsInline = true; v.preload = 'metadata';
+          if (fig.dataset.poster) v.poster = fig.dataset.poster;
+          v.src = src;
+          v.setAttribute('aria-label', $('figcaption', fig).textContent);
+          box.appendChild(v);
+        } else {
+          var img = new Image();
+          img.loading = 'lazy'; img.decoding = 'async'; img.alt = fig.dataset.alt || ''; img.src = src;
+          box.appendChild(img);
+        }
+      };
+      var fail = function () { fallbacks.push(fig); fillFallback(fig); };
+      if (!window.fetch || location.protocol === 'file:') { fail(); return; }
+      fetch(src, { method: 'HEAD' }).then(function (r) { if (r.ok) ok(); else fail(); }).catch(fail);
+    });
+    document.addEventListener('bvm:views', function () { fallbacks.forEach(fillFallback); });
   }
 
   /* ---------- Configurateur matériaux + métrés ---------- */

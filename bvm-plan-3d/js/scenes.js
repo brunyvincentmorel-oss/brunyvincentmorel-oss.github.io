@@ -58,8 +58,10 @@
     var PALETTE = {
       plan: { wall: '#DCE8EB', oak: '#11232A', oakLight: '#11232A', tile: '#11232A', stone: '#11232A', wood: '#1F3A44', dark: '#1F3A44', white: '#1F3A44', fabric: '#1F3A44', rug: '#172D35', deck: '#132730', leaf: '#1D3A40' },
       clay: { wall: '#EEF1EF', oak: '#CBD3CF', oakLight: '#CBD3CF', tile: '#CBD3CF', stone: '#CBD3CF', wood: '#F7F8F7', dark: '#F7F8F7', white: '#F7F8F7', fabric: '#F7F8F7', rug: '#DDE3E0', deck: '#C3CCC8', leaf: '#E3E8E6' },
+      explode: null,
       finish: { wall: '#EFEBE3', oak: '#B8895C', oakLight: '#CFAE84', tile: '#AEB6B4', stone: '#C3BCB0', wood: '#8A6242', dark: '#2E393E', white: '#F1F2EF', fabric: '#5C7782', rug: '#D5CCBC', deck: '#9C7552', leaf: '#6E8F63' }
     };
+    PALETTE.explode = PALETTE.finish;
     var mats = {}, targets = {};
     Object.keys(PALETTE.clay).forEach(function (k) {
       mats[k] = new T.MeshStandardMaterial({ color: lin(PALETTE.plan[k]), roughness: 0.88, metalness: 0 });
@@ -109,36 +111,38 @@
     scene.add(deck);
 
     // --- Mobilier ---
+    var furnGroup = new T.Group();
+    scene.add(furnGroup);
     var FL = 0.04;
     B.furniture.forEach(function (f) {
       if (f.k === 'box') {
-        scene.add(boxE(f.x0, f.x1, FL, FL + f.h, f.z0, f.z1, mats[f.m]));
+        furnGroup.add(boxE(f.x0, f.x1, FL, FL + f.h, f.z0, f.z1, mats[f.m]));
       } else if (f.k === 'rug') {
         var rug = boxE(f.x0, f.x1, FL, FL + 0.012, f.z0, f.z1, mats.rug);
         rug.castShadow = false;
-        scene.add(rug);
+        furnGroup.add(rug);
       } else if (f.k === 'table') {
-        scene.add(boxE(f.x0, f.x1, FL + f.h - 0.04, FL + f.h, f.z0, f.z1, mats.wood));
+        furnGroup.add(boxE(f.x0, f.x1, FL + f.h - 0.04, FL + f.h, f.z0, f.z1, mats.wood));
         [[f.x0 + 0.06, f.z0 + 0.06], [f.x1 - 0.1, f.z0 + 0.06], [f.x0 + 0.06, f.z1 - 0.1], [f.x1 - 0.1, f.z1 - 0.1]].forEach(function (p) {
-          scene.add(boxE(p[0], p[0] + 0.04, FL, FL + f.h - 0.04, p[1], p[1] + 0.04, mats.wood));
+          furnGroup.add(boxE(p[0], p[0] + 0.04, FL, FL + f.h - 0.04, p[1], p[1] + 0.04, mats.wood));
         });
       } else if (f.k === 'sofa') {
-        scene.add(boxE(f.x0, f.x1, FL, FL + 0.42, f.z0, f.z1, mats.fabric));
-        scene.add(boxE(f.x0, f.x1, FL + 0.42, FL + 0.82, f.z1 - 0.22, f.z1, mats.fabric));
-        scene.add(boxE(f.x0, f.x0 + 0.18, FL + 0.42, FL + 0.62, f.z0, f.z1, mats.fabric));
-        scene.add(boxE(f.x1 - 0.18, f.x1, FL + 0.42, FL + 0.62, f.z0, f.z1, mats.fabric));
+        furnGroup.add(boxE(f.x0, f.x1, FL, FL + 0.42, f.z0, f.z1, mats.fabric));
+        furnGroup.add(boxE(f.x0, f.x1, FL + 0.42, FL + 0.82, f.z1 - 0.22, f.z1, mats.fabric));
+        furnGroup.add(boxE(f.x0, f.x0 + 0.18, FL + 0.42, FL + 0.62, f.z0, f.z1, mats.fabric));
+        furnGroup.add(boxE(f.x1 - 0.18, f.x1, FL + 0.42, FL + 0.62, f.z0, f.z1, mats.fabric));
       } else if (f.k === 'bed') {
-        scene.add(boxE(f.x0, f.x1, FL, FL + 0.3, f.z0, f.z1, mats.wood));
-        scene.add(boxE(f.x0 + 0.04, f.x1 - 0.03, FL + 0.3, FL + 0.52, f.z0 + 0.03, f.z1 - 0.03, mats.white));
-        scene.add(boxE(f.x0, f.x0 + 0.08, FL, FL + 1.0, f.z0, f.z1, mats.fabric));
+        furnGroup.add(boxE(f.x0, f.x1, FL, FL + 0.3, f.z0, f.z1, mats.wood));
+        furnGroup.add(boxE(f.x0 + 0.04, f.x1 - 0.03, FL + 0.3, FL + 0.52, f.z0 + 0.03, f.z1 - 0.03, mats.white));
+        furnGroup.add(boxE(f.x0, f.x0 + 0.08, FL, FL + 1.0, f.z0, f.z1, mats.fabric));
         var pw = (f.z1 - f.z0 - 0.3) / 2;
-        scene.add(boxE(f.x0 + 0.12, f.x0 + 0.52, FL + 0.52, FL + 0.64, f.z0 + 0.1, f.z0 + 0.1 + pw, mats.white));
-        scene.add(boxE(f.x0 + 0.12, f.x0 + 0.52, FL + 0.52, FL + 0.64, f.z0 + 0.2 + pw, f.z0 + 0.2 + 2 * pw, mats.white));
-        scene.add(boxE(f.x0 + 0.9, f.x1 - 0.03, FL + 0.52, FL + 0.56, f.z0 + 0.02, f.z1 - 0.02, mats.fabric));
+        furnGroup.add(boxE(f.x0 + 0.12, f.x0 + 0.52, FL + 0.52, FL + 0.64, f.z0 + 0.1, f.z0 + 0.1 + pw, mats.white));
+        furnGroup.add(boxE(f.x0 + 0.12, f.x0 + 0.52, FL + 0.52, FL + 0.64, f.z0 + 0.2 + pw, f.z0 + 0.2 + 2 * pw, mats.white));
+        furnGroup.add(boxE(f.x0 + 0.9, f.x1 - 0.03, FL + 0.52, FL + 0.56, f.z0 + 0.02, f.z1 - 0.02, mats.fabric));
       } else if (f.k === 'glass') {
         var gl = boxE(f.x0, f.x1, FL, FL + f.h, f.z0, f.z1, glassMat);
         gl.castShadow = false;
-        scene.add(gl);
+        furnGroup.add(gl);
       }
     });
 
@@ -232,7 +236,7 @@
     var target = new T.Vector3(6.6, 0, 4.5), goalTarget = target.clone();
     var cam = { az: 0, pol: 0.002, rad: 60, fov: 20 };
     var goal = { az: 0, pol: 0.002, rad: 60, fov: 20 };
-    var goalScale = PLAN_SCALE, aspect = 1.3, vw = 1, vh = 1, mode = 'plan';
+    var goalScale = PLAN_SCALE, goalExplode = 0, aspect = 1.3, vw = 1, vh = 1, mode = 'plan';
     function nearest(cur, want) { var tau = Math.PI * 2; return want + tau * Math.round((cur - want) / tau); }
     function planGoal() {
       goal.fov = 20;
@@ -254,7 +258,8 @@
       var is3d = m !== 'plan';
       vp.dataset.mode = is3d ? '3d' : 'plan';
       buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === m)); });
-      if (scaleEl) scaleEl.textContent = m === 'plan' ? 'Vue en plan · cotes en m' : m === 'clay' ? 'Maquette blanche' : 'Finitions appliquées';
+      if (scaleEl) scaleEl.textContent = { plan: 'Vue en plan · cotes en m', clay: 'Maquette blanche', finish: 'Finitions appliquées', explode: 'Vue éclatée' }[m];
+      goalExplode = m === 'explode' ? 1 : 0;
       Object.keys(mats).forEach(function (k) { targets[k] = lin(PALETTE[m][k]); });
       goalScale = is3d ? 1 : PLAN_SCALE;
       if (is3d) {
@@ -267,6 +272,7 @@
         cam.az = goal.az; cam.pol = goal.pol; cam.rad = goal.rad; cam.fov = goal.fov;
         target.copy(goalTarget);
         wallGroup.scale.y = goalScale;
+        wallGroup.position.y = goalExplode * 1.6; furnGroup.position.y = goalExplode * 0.8;
         Object.keys(mats).forEach(function (k) { mats[k].color.copy(targets[k]); });
         coteMat.opacity = is3d ? 0 : 1;
       }
@@ -319,6 +325,8 @@
       cam.fov += (goal.fov - cam.fov) * k;
       target.lerp(goalTarget, k);
       wallGroup.scale.y += (goalScale - wallGroup.scale.y) * damp(dt, 3);
+      wallGroup.position.y += (goalExplode * 1.6 - wallGroup.position.y) * damp(dt, 3.5);
+      furnGroup.position.y += (goalExplode * 0.8 - furnGroup.position.y) * damp(dt, 3.5);
       var kc = damp(dt, 4);
       Object.keys(mats).forEach(function (key) { mats[key].color.lerp(targets[key], kc); });
       coteMat.opacity += ((is3d ? 0 : 1) - coteMat.opacity) * damp(dt, 5);
@@ -358,22 +366,37 @@
     whenVisible(vp, function (v) { inView = v; running = v && !document.hidden; if (running) kick(); });
     document.addEventListener('visibilitychange', function () { running = inView && !document.hidden; if (running) kick(); });
 
-    // --- Vue figée pour la couverture du dossier de projet ---
-    function snapshot() {
-      if (B.snapshotURL) return;
+    // --- Vues figées (aperçus des captures tant que les vraies ne sont pas en ligne) ---
+    function renderViews() {
+      if (B.views) return;
       var saved = {};
       Object.keys(mats).forEach(function (k) { saved[k] = mats[k].color.clone(); mats[k].color.copy(lin(PALETTE.finish[k])); });
-      var savedScale = wallGroup.scale.y, savedOp = coteMat.opacity;
-      wallGroup.scale.y = 1; coteMat.opacity = 0;
-      var c2 = new T.PerspectiveCamera(30, aspect, 0.1, 300), tgt = new T.Vector3(6, 0.3, 4.8), r = 27 * Math.max(1, 1.3 / aspect);
-      c2.position.set(tgt.x + r * Math.sin(0.95) * Math.sin(0.72), tgt.y + r * Math.cos(0.95), tgt.z + r * Math.sin(0.95) * Math.cos(0.72));
-      c2.lookAt(tgt);
-      renderer.render(scene, c2);
-      try { B.snapshotURL = canvas.toDataURL('image/png'); } catch (e) { B.snapshotURL = null; }
+      var st = { s: wallGroup.scale.y, wy: wallGroup.position.y, fy: furnGroup.position.y, op: coteMat.opacity };
+      coteMat.opacity = 0;
+      var views = {}, c2 = new T.PerspectiveCamera(30, aspect, 0.1, 300);
+      function orbit(tx, ty, tz, az, pol, r, fov) {
+        c2.fov = fov; c2.aspect = aspect; c2.updateProjectionMatrix();
+        c2.position.set(tx + r * Math.sin(pol) * Math.sin(az), ty + r * Math.cos(pol), tz + r * Math.sin(pol) * Math.cos(az));
+        c2.lookAt(tx, ty, tz);
+      }
+      function shot(name) {
+        renderer.render(scene, c2);
+        try { views[name] = canvas.toDataURL('image/png'); } catch (e) { views[name] = null; }
+      }
+      var fit = Math.max(1, 1.3 / aspect);
+      wallGroup.scale.y = 1; wallGroup.position.y = 0; furnGroup.position.y = 0;
+      orbit(6, 0.3, 4.8, 0.72, 0.95, 27 * fit, 30); shot('finish');
+      orbit(6, 0, 4.8, 0, 0.002, 44 * fit, 30); shot('top');
+      c2.fov = 62; c2.aspect = aspect; c2.updateProjectionMatrix();
+      c2.position.set(6.4, 1.6, 5.0); c2.lookAt(1.6, 0.9, 1.2); shot('interior');
+      wallGroup.position.y = 1.6; furnGroup.position.y = 0.8;
+      orbit(6, 1.2, 4.8, 0.72, 0.92, 30 * fit, 30); shot('exploded');
       Object.keys(mats).forEach(function (k) { mats[k].color.copy(saved[k]); });
-      wallGroup.scale.y = savedScale; coteMat.opacity = savedOp;
+      wallGroup.scale.y = st.s; wallGroup.position.y = st.wy; furnGroup.position.y = st.fy; coteMat.opacity = st.op;
       renderer.render(scene, camera);
-      if (B.snapshotURL) document.dispatchEvent(new CustomEvent('bvm:snapshot', { detail: B.snapshotURL }));
+      B.views = views;
+      B.snapshotURL = views.finish;
+      document.dispatchEvent(new CustomEvent('bvm:views', { detail: views }));
     }
 
     // --- Séquence d'ouverture : plan → volume → finitions ---
@@ -381,14 +404,14 @@
     function cancelIntro() { timers.forEach(clearTimeout); timers = []; }
     if (reduce) {
       setMode('finish', true);
-      setTimeout(snapshot, 300);
+      setTimeout(renderViews, 300);
     } else {
       setMode('plan', true);
       wallGroup.scale.y = 0.02; goalScale = 0.02;
       timers.push(setTimeout(function () { goalScale = PLAN_SCALE; }, 500));
       timers.push(setTimeout(function () { setMode('clay'); }, 2000));
       timers.push(setTimeout(function () { setMode('finish'); }, 4600));
-      setTimeout(snapshot, 6400);
+      setTimeout(renderViews, 6400);
     }
     B.hero = { setMode: function (m) { cancelIntro(); setMode(m); } };
   }
@@ -617,7 +640,175 @@
     };
   }
 
-  function boot() { initHero(); initRoom(); }
+  /* =========================================================
+     Modèles : volume, garage et toiture combinables (24 modèles)
+     ========================================================= */
+  function initModels() {
+    var vp = document.getElementById('models-vp');
+    var canvas = document.getElementById('models-canvas');
+    if (!vp || !canvas) return;
+    var renderer;
+    try { renderer = makeRenderer(canvas); } catch (e) { root.classList.add('no-webgl'); return; }
+    var scene = new T.Scene();
+    var camera = new T.PerspectiveCamera(30, 1, 0.1, 200);
+    var std = function (hex, o) {
+      var p = { color: lin(hex), roughness: 0.85, metalness: 0 };
+      if (o) Object.keys(o).forEach(function (k) { p[k] = o[k]; });
+      return new T.MeshStandardMaterial(p);
+    };
+    var M = {
+      wall: std('#EDE6DA'), socle: std('#8D8A84'), glass: std('#2E3F47', { roughness: 0.25 }),
+      frame: std('#F4F2EC'), door: std('#4B3627'), garageDoor: std('#6B7479'),
+      slab: std('#C9C6BF'), roof: std('#B5563A', { side: T.DoubleSide })
+    };
+    var turntable = new T.Group();
+    scene.add(turntable);
+    var house = null;
+
+    function tri(pts, mat) {
+      var g = new T.BufferGeometry();
+      g.setAttribute('position', new T.Float32BufferAttribute(pts, 3));
+      g.computeVertexNormals();
+      var m = new T.Mesh(g, mat);
+      m.castShadow = true; m.receiveShadow = true;
+      return m;
+    }
+    function roofOn(grp, x0, x1, z0, z1, y, type) {
+      var o = 0.45, mid = (z0 + z1) / 2, d = z1 - z0;
+      if (type === 'plat') {
+        grp.add(boxE(x0 - 0.05, x1 + 0.05, y, y + 0.28, z0 - 0.05, z1 + 0.05, M.slab));
+        return;
+      }
+      var X0 = x0 - o, X1 = x1 + o, Z0 = z0 - o, Z1 = z1 + o;
+      if (type === '4pans') {
+        var h = d * 0.36, inset = (Z1 - Z0) / 2;
+        var R0 = [X0 + inset, y + h, mid], R1 = [X1 - inset, y + h, mid];
+        var A = [X0, y, Z0], Bp = [X1, y, Z0], C = [X1, y, Z1], D = [X0, y, Z1];
+        grp.add(tri([].concat(D, C, R1, D, R1, R0, A, R0, R1, A, R1, Bp, A, D, R0, Bp, R1, C), M.roof));
+        return;
+      }
+      var hh = d * (type === 'ardoises' ? 0.5 : 0.38);
+      var r0 = [X0, y + hh, mid], r1 = [X1, y + hh, mid];
+      grp.add(tri([].concat([X0, y, Z1], [X1, y, Z1], r1, [X0, y, Z1], r1, r0, [X0, y, Z0], r0, r1, [X0, y, Z0], r1, [X1, y, Z0]), M.roof));
+      var e = hh * 2 * o / (d + 2 * o), gable = [];
+      [x0, x1].forEach(function (x) {
+        gable = gable.concat([x, y, z0], [x, y, z1], [x, y + e, z1], [x, y, z0], [x, y + e, z1], [x, y + e, z0], [x, y + e, z0], [x, y + e, z1], [x, y + hh, mid]);
+      });
+      grp.add(tri(gable, new T.MeshStandardMaterial({ color: M.wall.color, roughness: 0.85, side: T.DoubleSide })));
+    }
+    function windows(grp, x0, x1, z0, z1, y, skipDoor) {
+      var faces = [[x0, x1, z1, 'z', 1], [x0, x1, z0, 'z', -1], [z0, z1, x0, 'x', -1], [z0, z1, x1, 'x', 1]];
+      faces.forEach(function (f, fi) {
+        var len = f[1] - f[0], n = Math.max(1, Math.floor(len / 2.6));
+        for (var i = 0; i < n; i++) {
+          if (skipDoor && fi === 0 && i === 1) continue;
+          var c = f[0] + len * (i + 0.5) / n, w = 1.1, hw = 1.25, yb = y + 0.95;
+          var off = f[4] * 0.02;
+          if (f[3] === 'z') {
+            grp.add(boxE(c - w / 2 - 0.06, c + w / 2 + 0.06, yb - 0.06, yb + hw + 0.06, f[2] + off - 0.02, f[2] + off + 0.02, M.frame));
+            grp.add(boxE(c - w / 2, c + w / 2, yb, yb + hw, f[2] + off * 2 - 0.02, f[2] + off * 2 + 0.02, M.glass));
+          } else {
+            grp.add(boxE(f[2] + off - 0.02, f[2] + off + 0.02, yb - 0.06, yb + hw + 0.06, c - w / 2 - 0.06, c + w / 2 + 0.06, M.frame));
+            grp.add(boxE(f[2] + off * 2 - 0.02, f[2] + off * 2 + 0.02, yb, yb + hw, c - w / 2, c + w / 2, M.glass));
+          }
+        }
+      });
+    }
+    function build(lv, gar, roof) {
+      if (house) { turntable.remove(house); house.traverse(function (o) { if (o.geometry) o.geometry.dispose(); }); }
+      house = new T.Group();
+      M.roof.color.copy(lin(B.models.roofColor[roof]));
+      var W = 11, Dd = 8.5, LH = 2.8, x0 = -W / 2, x1 = W / 2, z0 = -Dd / 2, z1 = Dd / 2;
+      house.add(boxE(x0 - 0.05, x1 + 0.05, 0, 0.3, z0 - 0.05, z1 + 0.05, M.socle));
+      house.add(boxE(x0, x1, 0.3, 0.3 + LH, z0, z1, M.wall));
+      windows(house, x0, x1, z0, z1, 0.3, true);
+      var doorX = x0 + W * 1.5 / 4;
+      house.add(boxE(doorX - 0.5, doorX + 0.5, 0.3, 2.45, z1, z1 + 0.05, M.door));
+      var top = 0.3 + LH;
+      if (lv === 'r1') {
+        house.add(boxE(x0, x1, top, top + LH, z0, z1, M.wall));
+        windows(house, x0, x1, z0, z1, top, false);
+        roofOn(house, x0, x1, z0, z1, top + LH, roof);
+      } else if (lv === 'partiel') {
+        var xm = x0 + W * 0.55;
+        house.add(boxE(x0, xm, top, top + LH, z0, z1, M.wall));
+        windows(house, x0, xm, z0, z1, top, false);
+        roofOn(house, x0, xm, z0, z1, top + LH, roof);
+        roofOn(house, xm, x1, z0, z1, top, roof);
+      } else {
+        roofOn(house, x0, x1, z0, z1, top, roof);
+      }
+      if (gar === 'avec') {
+        var g0 = x1, g1 = x1 + 3.6, gz0 = z1 - 6.2;
+        house.add(boxE(g0, g1, 0, 2.7, gz0, z1, M.wall));
+        house.add(boxE(g0 + 0.4, g1 - 0.4, 0.05, 2.25, z1, z1 + 0.05, M.garageDoor));
+        house.add(boxE(g0 - 0.05, g1 + 0.1, 2.7, 2.92, gz0 - 0.1, z1 + 0.1, M.slab));
+      }
+      house.position.x = gar === 'avec' ? -1.8 : 0;
+      turntable.add(house);
+      kick();
+    }
+
+    var shadowPlane = new T.Mesh(new T.CircleGeometry(13, 48), new T.ShadowMaterial({ opacity: 0.22 }));
+    shadowPlane.rotation.x = -Math.PI / 2; shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
+    scene.add(new T.HemisphereLight(lin('#FFFFFF'), lin('#B9B3A8'), 0.62));
+    var sun = new T.DirectionalLight(lin('#FFF1DC'), 0.95);
+    sun.position.set(-10, 16, 9);
+    sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+    var sc = sun.shadow.camera; sc.left = -12; sc.right = 12; sc.top = 12; sc.bottom = -12; sc.near = 1; sc.far = 50;
+    sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.02;
+    scene.add(sun);
+    var fill = new T.DirectionalLight(lin('#E6F2F6'), 0.35);
+    fill.position.set(12, 6, -8);
+    scene.add(fill);
+
+    var aspect = 1.3, dragging = false, px0 = 0, spin = 0.5, spinGoal = 0.5, lastInteract = 0;
+    canvas.addEventListener('pointerdown', function (e) {
+      dragging = true; px0 = e.clientX; lastInteract = performance.now();
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* capture optionnelle */ }
+      kick();
+    });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      spinGoal += (e.clientX - px0) * 0.01; px0 = e.clientX; lastInteract = performance.now();
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) { canvas.addEventListener(ev, function () { dragging = false; lastInteract = performance.now(); }); });
+
+    var running = false, raf = 0, last = performance.now();
+    function frame(now) {
+      raf = 0;
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!reduce && !dragging && now - lastInteract > 2500) spinGoal += dt * 0.35;
+      spin += (spinGoal - spin) * damp(dt, 6);
+      turntable.rotation.y = spin;
+      var r = 30 * Math.max(1, 1.25 / aspect);
+      camera.position.set(0, r * 0.42, r);
+      camera.lookAt(0, 2.4, 0);
+      renderer.render(scene, camera);
+      if (running) raf = requestAnimationFrame(frame);
+    }
+    function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+    function resize() {
+      var w = Math.max(1, canvas.clientWidth), h = Math.max(1, canvas.clientHeight);
+      renderer.setSize(w, h, false);
+      aspect = w / h; camera.aspect = aspect; camera.updateProjectionMatrix();
+      kick();
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
+    else window.addEventListener('resize', resize);
+    resize();
+    var inView = false;
+    whenVisible(vp, function (v) { inView = v; running = v && !document.hidden; if (running) kick(); });
+    document.addEventListener('visibilitychange', function () { running = inView && !document.hidden; if (running) kick(); });
+
+    B.modelScene = { build: build };
+    var pick = function (n, d) { var el = document.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : d; };
+    build(pick('lv', 'pp'), pick('gar', 'sans'), pick('roof', 'tuiles'));
+  }
+
+  function boot() { initHero(); initRoom(); initModels(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();

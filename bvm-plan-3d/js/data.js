@@ -201,6 +201,84 @@
     return s + '</svg>';
   };
 
+  // ---------- Devis d'exemple par lots (maison T4 ci-dessus, construction neuve) ----------
+  // f = part « finitions » du lot : c'est elle qui varie le plus selon la gamme choisie.
+  B.devis = {
+    tva: 0.20,
+    ranges: {
+      essentielle: { name: 'Essentielle', s: 0.94, f: 0.82 },
+      confort: { name: 'Confort', s: 1, f: 1 },
+      premium: { name: 'Premium', s: 1.08, f: 1.35 }
+    },
+    lots: [
+      { name: 'Terrassement et fondations', ht: 14200, f: 0 },
+      { name: 'Gros œuvre et maçonnerie', ht: 41800, f: 0 },
+      { name: 'Charpente et couverture', ht: 17600, f: 0.3 },
+      { name: 'Menuiseries extérieures', ht: 13900, f: 0.6 },
+      { name: 'Plâtrerie et isolation', ht: 16300, f: 0.3 },
+      { name: 'Électricité', ht: 9800, f: 0.5 },
+      { name: 'Plomberie et sanitaires', ht: 11200, f: 0.6 },
+      { name: 'Chauffage et ventilation', ht: 12400, f: 0.4 },
+      { name: 'Carrelage et faïence', ht: 7600, f: 1 },
+      { name: 'Revêtements de sols', ht: 5900, f: 1 },
+      { name: 'Peinture', ht: 8300, f: 1 }
+    ]
+  };
+  B.quote = function (rangeKey) {
+    var R = B.devis.ranges[rangeKey] || B.devis.ranges.confort;
+    var lots = B.devis.lots.map(function (l) {
+      var mult = (1 - l.f) * R.s + l.f * R.f;
+      return { name: l.name, ht: Math.round(l.ht * mult / 100) * 100 };
+    });
+    var ht = lots.reduce(function (s, l) { return s + l.ht; }, 0);
+    var tva = Math.round(ht * B.devis.tva);
+    return { lots: lots, ht: ht, tva: tva, ttc: ht + tva, m2: Math.round((ht + tva) / shab) };
+  };
+  B.money = function (v) { return Math.round(v).toLocaleString('fr-FR').replace(/\s/g, ' ') + ' €'; };
+
+  // ---------- Modèles : 3 volumes × 2 garages × 4 toitures = 24 combinaisons ----------
+  B.models = {
+    levels: [['pp', 'Plain-pied'], ['r1', 'R+1'], ['partiel', 'Étage partiel']],
+    garage: [['sans', 'Sans garage'], ['avec', 'Avec garage']],
+    roofs: [['tuiles', 'Tuiles'], ['ardoises', 'Ardoises'], ['plat', 'Toit plat'], ['4pans', '4 pans']],
+    roofColor: { tuiles: '#B5563A', ardoises: '#3E454C', plat: '#9AA3A6', '4pans': '#A9533A' },
+    number: function (lv, gar, roof) {
+      var idx = function (arr, k) { for (var i = 0; i < arr.length; i++) if (arr[i][0] === k) return i; return 0; };
+      return idx(B.models.levels, lv) * 8 + idx(B.models.garage, gar) * 4 + idx(B.models.roofs, roof) + 1;
+    },
+    label: function (lv, gar, roof) {
+      var get = function (arr, k) { for (var i = 0; i < arr.length; i++) if (arr[i][0] === k) return arr[i][1]; return ''; };
+      return get(B.models.levels, lv) + ' · ' + get(B.models.garage, gar).toLowerCase() + ' · ' + get(B.models.roofs, roof).toLowerCase();
+    }
+  };
+  // Élévation de façade simplifiée (vignettes de la galerie de modèles)
+  B.houseSVG = function (lv, gar, roof) {
+    var col = B.models.roofColor[roof], g = 80, lh = 21, s = '';
+    var top = lv === 'pp' ? g - lh : g - 2 * lh;
+    function roofOver(x0, x1, y, small) {
+      var o = 4, h = small ? 10 : 16;
+      if (roof === 'plat') return '<rect x="' + (x0 - 1) + '" y="' + (y - 3) + '" width="' + (x1 - x0 + 2) + '" height="3" fill="' + col + '"/>';
+      if (roof === '4pans') return '<path d="M' + (x0 - o) + ' ' + y + 'H' + (x1 + o) + 'L' + (x1 - h * 0.9) + ' ' + (y - h) + 'H' + (x0 + h * 0.9) + 'Z" fill="' + col + '"/>';
+      return '<path d="M' + (x0 - o) + ' ' + y + 'H' + (x1 + o) + 'L' + ((x0 + x1) / 2) + ' ' + (y - h - (roof === 'ardoises' ? 5 : 0)) + 'Z" fill="' + col + '"/>';
+    }
+    function wins(xs, y) {
+      return xs.map(function (cx) { return '<rect x="' + (cx - 3.5) + '" y="' + (y + 6) + '" width="7" height="8" fill="#2E3F47"/>'; }).join('');
+    }
+    var ground = wins([28, 58, 72], g - lh) + '<rect x="40" y="' + (g - 15) + '" width="8" height="15" fill="#4B3627"/>';
+    if (gar === 'avec') s += '<rect x="80" y="62" width="24" height="18" fill="#E2DACB" stroke="#0C171B" stroke-width=".8"/><rect x="84" y="67" width="16" height="13" fill="#6B7479"/><rect x="79" y="60" width="26" height="2.5" fill="#9AA3A6"/>';
+    if (lv === 'partiel') {
+      s += '<rect x="20" y="' + (g - lh) + '" width="60" height="' + lh + '" fill="#EDE6DA" stroke="#0C171B" stroke-width=".8"/>';
+      s += roofOver(52, 80, g - lh, true);
+      s += '<rect x="20" y="' + top + '" width="32" height="' + lh + '" fill="#EDE6DA" stroke="#0C171B" stroke-width=".8"/>';
+      s += roofOver(20, 52, top, false) + wins([29, 43], top) + ground;
+    } else {
+      s += '<rect x="20" y="' + top + '" width="60" height="' + (g - top) + '" fill="#EDE6DA" stroke="#0C171B" stroke-width=".8"/>';
+      s += roofOver(20, 80, top, false) + ground;
+      if (lv === 'r1') s += wins([28, 43, 58, 72], top);
+    }
+    return '<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="6" y1="80.5" x2="114" y2="80.5" stroke="#0C171B" stroke-width=".8"/>' + s + '</svg>';
+  };
+
   // ---------- Textures de sols (canvas 2D, tuilables) ----------
   B.floors = {
     chene: { name: 'Chêne clair', waste: 0.10, tile: 2.0, base: '#C8A479', rough: 0.7 },
