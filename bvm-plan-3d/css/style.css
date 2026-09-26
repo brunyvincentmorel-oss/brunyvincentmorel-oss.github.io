@@ -1,7 +1,7 @@
 /* =========================================================
    BVM PLAN 3D — système de design
    Couleurs : nuit (écran / maquette) · papier calque (plans) · cyan BVM
-   Typo : Archivo étendu (titres) · Instrument Sans (texte) · IBM Plex Mono (cotes, étiquettes)
+   Typo : Archivo étendu (titres) · Plus Jakarta Sans (texte, recommandation ui-ux-pro-max) · IBM Plex Mono (cotes, étiquettes)
    ========================================================= */
 :root {
   color-scheme: dark;
@@ -17,14 +17,14 @@
   --paper-line: #C3CFCA;
   --ink: #0C171B;
   --ink-soft: #44565C;
-  --ink-faint: #6A7D83;
+  --ink-faint: #56696F;
   --cyan: #19B5E8;
   --cyan-hi: #5CCBF0;
   --cyan-deep: #086D91;
   --error: #FF8A73;
 
   --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --ease: cubic-bezier(.16, 1, .3, 1);
@@ -133,7 +133,7 @@ h3 { font-size: 1.16rem; font-stretch: 110%; font-weight: 650; letter-spacing: -
 .nav a::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px;
   background: var(--cyan); transform: scaleX(0); transform-origin: left;
-  transition: transform .35s var(--ease);
+  transition: transform .25s var(--ease);
 }
 .nav a.is-active::after { transform: scaleX(1); }
 .hdr-cta { display: none; }
@@ -249,7 +249,7 @@ h3 { font-size: 1.16rem; font-stretch: 110%; font-weight: 650; letter-spacing: -
 }
 .seg button:hover { color: var(--snow); }
 .seg button[aria-pressed="true"] { background: var(--cyan); color: #03141B; }
-.vp-scale { display: none; font: 500 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--snow-faint); }
+.vp-scale { display: none; font: 500 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--snow-soft); }
 @media (min-width: 620px) { .vp-scale { display: block; } }
 .vp-labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
 .vp-label, .vp-cote { position: absolute; left: 0; top: 0; white-space: nowrap; text-align: center; will-change: transform; }
@@ -370,7 +370,7 @@ h3 { font-size: 1.16rem; font-stretch: 110%; font-weight: 650; letter-spacing: -
   transition: background-color .3s var(--ease);
 }
 .feat:hover { background: var(--paper-2); }
-.feat-ic { width: 48px; height: 48px; fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .4s var(--ease); }
+.feat-ic { width: 48px; height: 48px; fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s var(--ease); }
 .feat:hover .feat-ic { transform: translateY(-3px); }
 .feat-ic .acc { stroke: var(--cyan-deep); }
 .feat p { color: var(--ink-soft); font-size: .98rem; }
@@ -603,7 +603,7 @@ h3 { font-size: 1.16rem; font-stretch: 110%; font-weight: 650; letter-spacing: -
   background:
     linear-gradient(var(--ink), var(--ink)) center / 11px 1.5px no-repeat,
     linear-gradient(var(--ink), var(--ink)) center / 1.5px 11px no-repeat;
-  transition: transform .35s var(--ease), border-color .2s;
+  transition: transform .25s var(--ease), border-color .2s;
 }
 .faq-list summary:hover::after { border-color: var(--ink); }
 .faq-list details[open] summary::after { transform: rotate(45deg); }
@@ -678,7 +678,26 @@ h3 { font-size: 1.16rem; font-stretch: 110%; font-weight: 650; letter-spacing: -
 /* ---------- Mouvement ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .rv.is-in { animation: rise .9s var(--ease) both; animation-delay: var(--d, 0s); }
+  .feat.rv.is-in, .aud.rv.is-in { animation: pop .45s cubic-bezier(.34, 1.4, .64, 1) both; animation-delay: var(--d, 0s); }
 }
+@keyframes pop { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+
+/* ---------- Appel à l'action fixe (mobile) ---------- */
+.m-cta {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+  background: rgba(10, 19, 23, .88);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-top: 1px solid rgba(232, 240, 242, .12);
+  font: 500 .72rem/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--snow-soft);
+  transform: translateY(110%); visibility: hidden;
+  transition: transform .3s var(--ease), visibility 0s .3s;
+}
+.m-cta .btn { flex: none; text-transform: none; letter-spacing: normal; white-space: nowrap; }
+.m-cta.is-on { transform: none; visibility: visible; transition: transform .3s var(--ease); }
+@media (min-width: 1040px) { .m-cta { display: none; } }
 @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes drawStroke { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }

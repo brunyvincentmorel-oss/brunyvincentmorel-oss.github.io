@@ -59,6 +59,20 @@
     }, { passive: true });
   }
 
+  /* ---------- Appel à l'action fixe (mobile), hors hero, formulaire et pied de page ---------- */
+  var mcta = $('#m-cta');
+  if (mcta) {
+    var seen = {};
+    var ctaObs = io(function (es) {
+      es.forEach(function (e) { seen[e.target.id || 'ftr'] = e.isIntersecting; });
+      var on = !seen.top && !seen.acces && !seen.ftr;
+      mcta.classList.toggle('is-on', on);
+      mcta.setAttribute('aria-hidden', String(!on));
+      if (on) mcta.removeAttribute('inert'); else mcta.setAttribute('inert', '');
+    });
+    if (ctaObs) ['#top', '#acces', '.ftr'].forEach(function (s) { var el = $(s); if (el) { seen[el.id || 'ftr'] = true; ctaObs.observe(el); } });
+  }
+
   /* ---------- Lien actif selon la section ---------- */
   var navLinks = $$('.nav a[href^="#"]');
   var spy = io(function (entries) {
