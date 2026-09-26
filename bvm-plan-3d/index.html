@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BVM PLAN 3D</title>
+<meta name="description" content="BVM PLAN 3D : concevez une maison, tracez des plans 2D cotés, obtenez la maquette 3D, aménagez les pièces, visualisez matériaux et couleurs et récupérez les surfaces automatiquement.">
+<meta name="theme-color" content="#0A1317">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="BVM PLAN 3D">
+<meta property="og:description" content="Du premier trait à la maison en 3D : plans cotés, maquette, finitions et métrés dans une seule application.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A1317'/%3E%3Cpath d='M16 4.5 26.4 10.5 16 16.5 5.6 10.5Z' fill='%2319B5E8'/%3E%3Cpath d='M16 16.5 26.4 10.5v11.5L16 28Z' fill='%23E8F0F2' fill-opacity='.2' stroke='%23E8F0F2' stroke-width='1.3' stroke-linejoin='round'/%3E%3Cpath d='M5.6 10.5 16 16.5V28L5.6 22Z' fill='none' stroke='%23E8F0F2' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script defer src="js/data.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script defer src="js/scenes.js"></script>
+<script defer src="js/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<header class="hdr" id="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="#top" aria-label="BVM PLAN 3D, retour en haut de page">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27.3 9.5 16 16 4.7 9.5Z" fill="#19B5E8"/><path d="M16 16 27.3 9.5v13L16 29Z" fill="#E8F0F2" fill-opacity=".16" stroke="#E8F0F2" stroke-width="1.2" stroke-linejoin="round"/><path d="M4.7 9.5 16 16v13L4.7 22.5Z" fill="none" stroke="#E8F0F2" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      <span class="brand-word"><b>BVM</b><span>PLAN 3D</span></span>
+    </a>
+    <nav class="nav" aria-label="Navigation principale">
+      <ul>
+        <li><a href="#concept">Concept</a></li>
+        <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+        <li><a href="#experience">Expérience</a></li>
+        <li><a href="#materiaux">Matériaux</a></li>
+        <li><a href="#pour-qui">Pour qui</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn--primary btn--sm hdr-cta" href="#acces">Accès anticipé</a>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" inert>
+  <nav aria-label="Navigation mobile">
+    <ul>
+      <li><a href="#concept">Concept</a></li>
+      <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+      <li><a href="#experience">Expérience</a></li>
+      <li><a href="#materiaux">Matériaux</a></li>
+      <li><a href="#pour-qui">Pour qui</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </nav>
+  <a class="btn btn--primary btn--block" href="#acces">Demander un accès anticipé</a>
+</div>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Conception de maisons en 2D et 3D</p>
+        <h1 id="hero-title">Du premier trait à la maison en&nbsp;3D.</h1>
+        <p class="lead">BVM PLAN 3D réunit le plan coté, la maquette 3D, les finitions et les métrés dans une seule application. Vous tracez les murs&nbsp;; la maison prend du volume et les surfaces se calculent au fur et à mesure.</p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="#acces">Demander un accès anticipé <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a class="btn btn--ghost" href="#experience">Voir le fonctionnement</a>
+        </div>
+        <ul class="hero-specs" aria-label="Points clés">
+          <li>Plans cotés</li>
+          <li>Surfaces calculées</li>
+          <li>3D en temps réel</li>
+        </ul>
+      </div>
+
+      <figure class="viewport" id="hero-vp" data-mode="plan">
+        <div class="vp-bar">
+          <div class="seg" role="group" aria-label="Mode d'affichage de la maquette">
+            <button type="button" data-mode="plan" aria-pressed="true">Plan 2D</button>
+            <button type="button" data-mode="clay" aria-pressed="false">Maquette</button>
+            <button type="button" data-mode="finish" aria-pressed="false">Finitions</button>
+          </div>
+          <span class="vp-scale">Vue en plan · cotes en m</span>
+        </div>
+        <canvas id="hero-canvas" role="img" aria-label="Maquette 3D interactive d'une maison T4 de plain-pied de 109,76 m² habitables"></canvas>
+        <div class="vp-labels" aria-hidden="true"></div>
+        <div class="vp-fallback" data-plan='{"theme":"night","labels":true,"cotes":true}'></div>
+        <p class="vp-hint" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7 3 10l3 3M14 7l3 3-3 3M3 10h14"/></svg>Glisser pour pivoter</p>
+        <figcaption class="vp-hud">
+          <span><b><abbr title="Surface habitable">SHAB</abbr></b>109,76&nbsp;m²</span>
+          <span><b>Pièces</b>7</span>
+          <span><b>Emprise</b>126,69&nbsp;m²</span>
+          <span><b><abbr title="Hauteur sous plafond">HSP</abbr></b>2,50&nbsp;m</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ CONCEPT ============ -->
+  <section class="sheet sheet--paper" id="concept" aria-labelledby="concept-title">
+    <div class="wrap">
+      <div class="concept-grid">
+        <div class="concept-text rv">
+          <p class="eyebrow">Le concept</p>
+          <h2 id="concept-title">Un seul fichier, du premier trait au dossier final.</h2>
+          <p>Un projet de maison passe souvent par plusieurs outils&nbsp;: un logiciel de dessin pour le plan, un autre pour la 3D, un tableur pour les surfaces et un nuancier papier pour les couleurs. BVM PLAN 3D rassemble ces étapes.</p>
+          <p>Chaque modification du plan met à jour la maquette, les surfaces et les quantités. Vous travaillez sur une seule version du projet, toujours juste.</p>
+        </div>
+        <figure class="plan-fig rv" style="--d:.1s">
+          <div class="plan-draw" data-plan='{"theme":"ink","labels":true,"cotes":true}'></div>
+          <figcaption><span>Plan de niveau · maison T4 de plain-pied</span><span>Cotes en mètres</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="pillars">
+        <article class="pillar rv">
+          <p class="k">Le plan</p>
+          <h3>Un plan juste</h3>
+          <p>Murs, cloisons, portes et fenêtres se posent à la cote. La surface de chaque pièce se calcule pendant que vous dessinez.</p>
+        </article>
+        <article class="pillar rv" style="--d:.08s">
+          <p class="k">La maquette</p>
+          <h3>Une 3D sans double saisie</h3>
+          <p>Le volume se construit à partir du plan. Tournez autour de la maison, entrez dans les pièces, comparez les variantes.</p>
+        </article>
+        <article class="pillar rv" style="--d:.16s">
+          <p class="k">Le dossier</p>
+          <h3>Un projet présentable</h3>
+          <p>Plans, vues 3D, finitions et tableau des surfaces se rassemblent dans un dossier prêt à partager avec vos clients.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FONCTIONNALITÉS ============ -->
+  <section class="sheet sheet--paper" id="fonctionnalites" aria-labelledby="feat-title">
+    <div class="wrap">
+      <div class="sec-head sec-head--split rv">
+        <p class="eyebrow">Fonctionnalités</p>
+        <h2 id="feat-title">Tout ce qu'il faut pour concevoir une maison.</h2>
+        <p>Six outils qui partagent les mêmes données. Ce que vous dessinez dans le plan se retrouve dans la 3D, dans les finitions et dans les métrés.</p>
+      </div>
+      <div class="feat-grid">
+        <article class="feat rv">
+          <svg class="feat-ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 8h36v28H6z"/><path d="M6 22h16v14M22 8v8M30 22h12"/><path d="M22 16a6 6 0 0 1 6 6"/><path class="acc" d="M6 42h36M6 40v4M42 40v4"/></svg>
+          <h3>Plans 2D cotés</h3>
+          <p>Tracez les murs extérieurs et les cloisons, placez portes et fenêtres. Les cotes s'affichent et se mettent à jour à chaque modification.</p>
+          <ul class="tags"><li>Murs</li><li>Cloisons</li><li>Ouvertures</li></ul>
+        </article>
+        <article class="feat rv" style="--d:.06s">
+          <svg class="feat-ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6 40 15v18L24 42 8 33V15z"/><path d="M8 15l16 9 16-9M24 24v18"/><path class="acc" d="M13 30v-7l6 3.4v7"/></svg>
+          <h3>Maquette 3D réaliste</h3>
+          <p>Le volume est généré depuis le plan&nbsp;: hauteur sous plafond, épaisseur des murs, ouvertures. Lumière et ombres donnent une lecture juste des espaces.</p>
+          <ul class="tags"><li>Vue maquette</li><li>Visite intérieure</li></ul>
+        </article>
+        <article class="feat rv" style="--d:.12s">
+          <svg class="feat-ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 9h34v12H7z"/><path d="M11 13v8M37 13v8M11 13h26"/><path d="M17 27h14v9H17z"/><path class="acc" d="M11 25h26v15H11z" stroke-dasharray="2 2.5"/></svg>
+          <h3>Aménagement des pièces</h3>
+          <p>Meubles, cuisine, sanitaires et rangements aux dimensions réelles. Vous vérifiez les passages et les circulations avant de construire ou d'acheter.</p>
+          <ul class="tags"><li>Mobilier à l'échelle</li><li>Glisser-déposer</li></ul>
+        </article>
+        <article class="feat rv">
+          <svg class="feat-ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M20 41 7.6 13.2l7.3-3.2L27 37.8"/><path d="M22 41 17.4 11l7.9-1.2 4.6 30"/><path class="acc" d="M24 41 30.5 11.5l7.8 1.7L31.8 42.7z"/><circle cx="23" cy="38" r="2"/></svg>
+          <h3>Matériaux et couleurs</h3>
+          <p>Appliquez sols, revêtements muraux et teintes de peinture pièce par pièce. La référence de chaque teinte reste attachée à sa surface.</p>
+          <ul class="tags"><li>Sols</li><li>Murs</li><li>Peintures</li></ul>
+        </article>
+        <article class="feat rv" style="--d:.06s">
+          <svg class="feat-ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 38V8l30 30z"/><path d="M14 32V22l10 10z"/><path class="acc" d="M8 43h34M13 43v-3M18 43v-2M23 43v-3M28 43v-2M33 43v-3M38 43v-2"/></svg>
+          <h3>Métrés automatiques</h3>
+          <p>Surface habitable, surface de chaque pièce, murs à peindre déduction faite des ouvertures, linéaires de plinthes. Les quantités suivent le plan.</p>
+          <ul class="tags"><li>m²</li><li>ml</li><li>Quantités</li></ul>
+        </article>
+        <article class="feat rv" style="--d:.12s">
+          <svg class="feat-ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 42h38"/><path d="M9 42V20l10-6v28"/><path d="M19 42V24h12v18"/><path d="M31 42V16l9 5v21"/><path class="acc" d="M13 26h2M13 32h2M24 30h2M24 36h2M35 26h2M35 32h2"/></svg>
+          <h3>Projets immobiliers en 3D</h3>
+          <p>Regroupez plusieurs lots ou variantes dans un même projet et présentez-les en 3D à vos clients, acquéreurs ou partenaires.</p>
+          <ul class="tags"><li>Variantes</li><li>Lots</li><li>Présentation client</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXPÉRIENCE ============ -->
+  <section class="sheet sheet--night" id="experience" aria-labelledby="xp-title">
+    <div class="wrap">
+      <div class="sec-head sec-head--split rv">
+        <p class="eyebrow">L'expérience</p>
+        <h2 id="xp-title">Cinq étapes, un seul projet.</h2>
+        <p>De l'enveloppe de la maison au dossier remis au client, chaque étape reprend le travail de la précédente. Rien n'est ressaisi.</p>
+      </div>
+
+      <div class="xp">
+        <div class="xp-tabs" role="tablist" aria-label="Étapes de conception">
+          <button class="xp-tab is-on" role="tab" id="xp-tab-0" aria-controls="xp-panel" aria-selected="true" type="button"><span class="xp-num">1</span><span class="xp-t">Tracer</span><span class="xp-d">Dessinez l'enveloppe et les cloisons. Chaque mur affiche sa longueur, chaque pièce sa surface.</span><span class="xp-bar"><i></i></span></button>
+          <button class="xp-tab" role="tab" id="xp-tab-1" aria-controls="xp-panel" aria-selected="false" tabindex="-1" type="button"><span class="xp-num">2</span><span class="xp-t">Aménager</span><span class="xp-d">Placez le mobilier à l'échelle depuis la bibliothèque et vérifiez les passages.</span><span class="xp-bar"><i></i></span></button>
+          <button class="xp-tab" role="tab" id="xp-tab-2" aria-controls="xp-panel" aria-selected="false" tabindex="-1" type="button"><span class="xp-num">3</span><span class="xp-t">Habiller</span><span class="xp-d">Choisissez sols, peintures et matériaux pièce par pièce. La maquette se met à jour immédiatement.</span><span class="xp-bar"><i></i></span></button>
+          <button class="xp-tab" role="tab" id="xp-tab-3" aria-controls="xp-panel" aria-selected="false" tabindex="-1" type="button"><span class="xp-num">4</span><span class="xp-t">Mesurer</span><span class="xp-d">Retrouvez les surfaces par pièce et les quantités utiles pour chiffrer les travaux.</span><span class="xp-bar"><i></i></span></button>
+          <button class="xp-tab" role="tab" id="xp-tab-4" aria-controls="xp-panel" aria-selected="false" tabindex="-1" type="button"><span class="xp-num">5</span><span class="xp-t">Présenter</span><span class="xp-d">Rassemblez plans, vues 3D, finitions et surfaces dans un dossier de projet à partager.</span><span class="xp-bar"><i></i></span></button>
+        </div>
+
+        <div class="xp-main">
+          <div class="app rv" id="xp-panel" role="tabpanel" aria-labelledby="xp-tab-0" data-step="0">
+            <div class="app-top">
+              <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27.3 9.5 16 16 4.7 9.5Z" fill="#19B5E8"/><path d="M16 16 27.3 9.5v13L16 29Z" fill="#E8F0F2" fill-opacity=".16" stroke="#E8F0F2" stroke-width="1.2" stroke-linejoin="round"/><path d="M4.7 9.5 16 16v13L4.7 22.5Z" fill="none" stroke="#E8F0F2" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              <span class="app-file">Maison T4 · Variante B</span>
+              <span class="app-saved">Enregistré</span>
+              <span class="app-view" id="app-view">Plan 2D</span>
+            </div>
+            <div class="app-body">
+              <div class="app-tools" aria-hidden="true">
+                <span class="tool" data-t="select"><svg viewBox="0 0 20 20"><path d="M5 3l11 6.5-4.8 1.4L9 16z"/></svg></span>
+                <span class="tool" data-t="wall"><svg viewBox="0 0 20 20"><path d="M3 7h14v6H3z"/><path d="M3 10h14"/></svg></span>
+                <span class="tool" data-t="door"><svg viewBox="0 0 20 20"><path d="M4 17V4a13 13 0 0 1 13 13H4"/></svg></span>
+                <span class="tool" data-t="furn"><svg viewBox="0 0 20 20"><path d="M3 14V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5H3M5 14v2M15 14v2M6 11h8"/></svg></span>
+                <span class="tool" data-t="paint"><svg viewBox="0 0 20 20"><path d="M3 3h12v5H3z"/><path d="M15 5.5h2v4h-7v3M9 12.5h2v5H9z"/></svg></span>
+                <span class="tool" data-t="measure"><svg viewBox="0 0 20 20"><path d="M2.5 13.5 13.5 2.5l4 4-11 11z"/><path d="M6 10l1.5 1.5M8.5 7.5 10 9M11 5l1.5 1.5"/></svg></span>
+                <span class="tool" data-t="share"><svg viewBox="0 0 20 20"><path d="M10 3v9M6.5 6.5 10 3l3.5 3.5M4 11v5h12v-5"/></svg></span>
+              </div>
+
+              <div class="app-stage">
+                <div class="scr is-on" data-scr="0"><div data-plan='{"theme":"night","labels":true,"cotes":true,"highlight":3,"cursor":true,"label":"Plan en cours de tracé, mur est en surbrillance et sa cote de 10,30 m"}'></div></div>
+                <div class="scr" data-scr="1"><div data-plan='{"theme":"night","furniture":true,"label":"Plan meublé à l’échelle"}'></div></div>
+                <div class="scr" data-scr="2"><div data-plan='{"theme":"night","floors":true,"labels":true,"doors":false,"label":"Plan avec les revêtements de sol de chaque pièce"}'></div></div>
+                <div class="scr" data-scr="3">
+                  <table class="surf">
+                    <caption>Surfaces par pièce</caption>
+                    <thead><tr><th scope="col">Pièce</th><th scope="col">Dim. (m)</th><th scope="col">Surface</th></tr></thead>
+                    <tbody>
+                      <tr><td>Séjour / cuisine</td><td>7,00 × 5,20</td><td>36,40&nbsp;m²</td></tr>
+                      <tr><td>Suite parentale</td><td>4,60 × 3,70</td><td>17,02&nbsp;m²</td></tr>
+                      <tr><td>Chambre 3</td><td>5,20 × 3,20</td><td>16,64&nbsp;m²</td></tr>
+                      <tr><td>Chambre 2</td><td>3,40 × 4,40</td><td>14,96&nbsp;m²</td></tr>
+                      <tr><td>Salle de bains</td><td>2,90 × 3,20</td><td>9,28&nbsp;m²</td></tr>
+                      <tr><td>Entrée</td><td>8,20 × 1,10</td><td>9,02&nbsp;m²</td></tr>
+                      <tr><td>Salle d'eau</td><td>4,60 × 1,40</td><td>6,44&nbsp;m²</td></tr>
+                    </tbody>
+                    <tfoot><tr><td>Surface habitable</td><td></td><td>109,76&nbsp;m²</td></tr></tfoot>
+                  </table>
+                </div>
+                <div class="scr" data-scr="4">
+                  <div class="dos">
+                    <div class="dos-cover">
+                      <div class="dos-shot"><img class="dos-img" alt="Vue 3D de la maison exemple avec ses finitions" hidden><div class="dos-shot-fb" data-plan='{"theme":"night","doors":false}'></div></div>
+                      <div class="dos-meta"><span class="dos-k">Dossier de projet</span><strong>Maison T4 de plain-pied</strong><span>Variante B · 109,76&nbsp;m² habitables</span></div>
+                    </div>
+                    <ol class="dos-pages">
+                      <li><span class="dos-th" data-plan='{"theme":"ink","doors":false,"label":"Miniature du plan coté"}'></span><span>Plan coté</span></li>
+                      <li><span class="dos-th dos-th--3d"><img class="dos-img" alt="" hidden></span><span>Vues 3D</span></li>
+                      <li><span class="dos-th dos-th--fin"><i style="--c:#B8895C"></i><i style="--c:#CFAE84"></i><i style="--c:#AEB6B4"></i><i style="--c:#EFEBE3"></i></span><span>Finitions</span></li>
+                      <li><span class="dos-th dos-th--tab"><i></i><i></i><i></i><i></i><i></i></span><span>Surfaces</span></li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              <div class="app-panel">
+                <div class="pane is-on" data-pane="0">
+                  <p class="pane-h">Mur extérieur · Est</p>
+                  <dl class="props">
+                    <div><dt>Longueur</dt><dd class="hl">10,30&nbsp;m</dd></div>
+                    <div><dt>Épaisseur</dt><dd>30&nbsp;cm</dd></div>
+                    <div><dt>Hauteur</dt><dd>2,50&nbsp;m</dd></div>
+                    <div><dt>Accroche</dt><dd>Grille 10&nbsp;cm</dd></div>
+                  </dl>
+                </div>
+                <div class="pane" data-pane="1">
+                  <p class="pane-h">Bibliothèque</p>
+                  <ul class="lib">
+                    <li><b>Canapé 3 places</b><span>240 × 95&nbsp;cm</span></li>
+                    <li><b>Table 6 couverts</b><span>180 × 90&nbsp;cm</span></li>
+                    <li><b>Îlot central</b><span>180 × 60&nbsp;cm</span></li>
+                    <li><b>Lit double</b><span>160 × 200&nbsp;cm</span></li>
+                  </ul>
+                </div>
+                <div class="pane" data-pane="2">
+                  <p class="pane-h">Sols</p>
+                  <ul class="swl">
+                    <li><i style="--c:#B8895C"></i><b>Chêne naturel</b><span>Séjour / cuisine</span></li>
+                    <li><i style="--c:#CFAE84"></i><b>Chêne clair</b><span>Chambres</span></li>
+                    <li><i style="--c:#AEB6B4"></i><b>Grès cérame</b><span>Pièces d'eau</span></li>
+                    <li><i style="--c:#C3BCB0"></i><b>Pierre</b><span>Entrée</span></li>
+                  </ul>
+                  <p class="pane-h">Murs</p>
+                  <ul class="swl"><li><i style="--c:#EFEBE3"></i><b>RAL 9010</b><span>Toutes les pièces</span></li></ul>
+                </div>
+                <div class="pane" data-pane="3">
+                  <p class="pane-h">Synthèse</p>
+                  <dl class="props">
+                    <div><dt>Surface habitable</dt><dd class="hl">109,76&nbsp;m²</dd></div>
+                    <div><dt>Emprise au sol</dt><dd>126,69&nbsp;m²</dd></div>
+                    <div><dt>Périmètre ext.</dt><dd>45,20&nbsp;ml</dd></div>
+                    <div><dt>Volume</dt><dd>274,40&nbsp;m³</dd></div>
+                  </dl>
+                </div>
+                <div class="pane" data-pane="4">
+                  <p class="pane-h">Dossier de projet</p>
+                  <dl class="props">
+                    <div><dt>Planches</dt><dd>4</dd></div>
+                    <div><dt>Variante</dt><dd>B</dd></div>
+                    <div><dt>Format</dt><dd>PDF</dd></div>
+                  </dl>
+                  <p class="pane-btn">Exporter le dossier</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="xp-caption" id="xp-caption">Dessinez l'enveloppe et les cloisons. Chaque mur affiche sa longueur, chaque pièce sa surface.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MATÉRIAUX ============ -->
+  <section class="sheet sheet--paper" id="materiaux" aria-labelledby="mat-title">
+    <div class="wrap">
+      <div class="sec-head sec-head--split rv">
+        <p class="eyebrow">Matériaux et couleurs</p>
+        <h2 id="mat-title">Voir la teinte sur les murs avant de l'appliquer.</h2>
+        <p>Changez la couleur des murs et le revêtement de sol&nbsp;: la pièce se met à jour et les quantités restent sous vos yeux. Essayez sur ce séjour de 5,20 × 4,00&nbsp;m.</p>
+      </div>
+
+      <div class="cfg">
+        <figure class="cfg-vp rv" id="room-vp">
+          <canvas id="room-canvas" role="img" aria-label="Séjour en 3D dont les murs et le sol changent selon votre sélection"></canvas>
+          <p class="cfg-fallback">L'aperçu 3D n'est pas disponible sur cet appareil. Les quantités ci-contre restent à jour.</p>
+          <figcaption class="cfg-cap"><span id="cfg-cap-wall">RAL 6021 · Vert pâle</span><span id="cfg-cap-floor">Chêne clair</span></figcaption>
+        </figure>
+
+        <div class="cfg-side">
+          <fieldset class="sw-group">
+            <legend>Murs · teintes RAL</legend>
+            <div class="sw-list">
+              <label class="sw" for="w-9010"><input type="radio" name="wall" id="w-9010" value="9010" data-hex="#F1ECE1" data-code="RAL 9010" data-name="Blanc pur"><span class="sw-chip" style="--c:#F1ECE1"></span><span class="sw-txt"><b>RAL 9010</b><span>Blanc pur</span></span></label>
+              <label class="sw" for="w-7035"><input type="radio" name="wall" id="w-7035" value="7035" data-hex="#CBD0CC" data-code="RAL 7035" data-name="Gris clair"><span class="sw-chip" style="--c:#CBD0CC"></span><span class="sw-txt"><b>RAL 7035</b><span>Gris clair</span></span></label>
+              <label class="sw" for="w-6021"><input type="radio" name="wall" id="w-6021" value="6021" data-hex="#89AC76" data-code="RAL 6021" data-name="Vert pâle" checked><span class="sw-chip" style="--c:#89AC76"></span><span class="sw-txt"><b>RAL 6021</b><span>Vert pâle</span></span></label>
+              <label class="sw" for="w-5014"><input type="radio" name="wall" id="w-5014" value="5014" data-hex="#606E8C" data-code="RAL 5014" data-name="Bleu pigeon"><span class="sw-chip" style="--c:#606E8C"></span><span class="sw-txt"><b>RAL 5014</b><span>Bleu pigeon</span></span></label>
+              <label class="sw" for="w-3012"><input type="radio" name="wall" id="w-3012" value="3012" data-hex="#C1876B" data-code="RAL 3012" data-name="Rouge beige"><span class="sw-chip" style="--c:#C1876B"></span><span class="sw-txt"><b>RAL 3012</b><span>Rouge beige</span></span></label>
+              <label class="sw" for="w-7016"><input type="radio" name="wall" id="w-7016" value="7016" data-hex="#383E42" data-code="RAL 7016" data-name="Gris anthracite"><span class="sw-chip" style="--c:#383E42"></span><span class="sw-txt"><b>RAL 7016</b><span>Gris anthracite</span></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="sw-group">
+            <legend>Sol</legend>
+            <div class="sw-list">
+              <label class="sw" for="f-chene"><input type="radio" name="floor" id="f-chene" value="chene" checked><span class="sw-chip sw-chip--tex" data-tex="chene" style="--c:#C8A479"></span><span class="sw-txt"><b>Chêne clair</b><span>Lames de 18&nbsp;cm</span></span></label>
+              <label class="sw" for="f-noyer"><input type="radio" name="floor" id="f-noyer" value="noyer"><span class="sw-chip sw-chip--tex" data-tex="noyer" style="--c:#6E4C35"></span><span class="sw-txt"><b>Noyer</b><span>Parquet massif</span></span></label>
+              <label class="sw" for="f-beton"><input type="radio" name="floor" id="f-beton" value="beton"><span class="sw-chip sw-chip--tex" data-tex="beton" style="--c:#B8B4AC"></span><span class="sw-txt"><b>Béton ciré</b><span>Sans joint</span></span></label>
+              <label class="sw" for="f-ciment"><input type="radio" name="floor" id="f-ciment" value="ciment"><span class="sw-chip sw-chip--tex" data-tex="ciment" style="--c:#E6DFD1"></span><span class="sw-txt"><b>Carreaux ciment</b><span>20 × 20&nbsp;cm</span></span></label>
+            </div>
+          </fieldset>
+
+          <div class="qty" aria-live="polite">
+            <p class="qty-h">Métrés de la pièce</p>
+            <dl>
+              <div><dt>Sol</dt><dd id="q-floor">20,80&nbsp;m²</dd><p class="sub" id="q-floor-sub">22,88&nbsp;m² à commander (+10&nbsp;% de chutes)</p></div>
+              <div><dt>Murs à peindre</dt><dd id="q-walls">42,36&nbsp;m²</dd><p class="sub">Porte et fenêtre déduites, plafond non compris</p></div>
+              <div><dt>Peinture</dt><dd id="q-paint">≈&nbsp;8,5&nbsp;L</dd><p class="sub" id="q-paint-sub">2 couches · RAL 6021</p></div>
+              <div><dt>Plinthes</dt><dd id="q-plinth">17,50&nbsp;ml</dd><p class="sub">Seuil de porte déduit</p></div>
+            </dl>
+            <p class="qty-note">Teintes affichées à titre indicatif&nbsp;: le rendu écran ne remplace pas un échantillon. Peinture calculée sur une base de 10&nbsp;m² par litre et par couche.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ POUR QUI ============ -->
+  <section class="sheet sheet--night" id="pour-qui" aria-labelledby="aud-title">
+    <div class="wrap">
+      <div class="sec-head sec-head--split rv">
+        <p class="eyebrow">Pour qui</p>
+        <h2 id="aud-title">Pensé pour ceux qui font les maisons.</h2>
+        <p>Particuliers et professionnels partagent le même besoin&nbsp;: voir un projet avant qu'il existe, et savoir ce qu'il représente en surfaces et en quantités.</p>
+      </div>
+      <div class="aud-grid">
+        <article class="aud rv">
+          <p class="aud-k">Particuliers</p>
+          <h3>Voir sa future maison avant le premier coup de pelle.</h3>
+          <p>Testez les agencements, comparez les finitions et arrivez chez l'artisan ou le constructeur avec un projet clair.</p>
+          <ul class="tags tags--night"><li>Construction</li><li>Extension</li><li>Rénovation</li></ul>
+        </article>
+        <article class="aud rv" style="--d:.06s">
+          <p class="aud-k">Artisans et entreprises du bâtiment</p>
+          <h3>Montrer le résultat avant les travaux.</h3>
+          <p>Faites valider les teintes et les matériaux en 3D, puis récupérez les métrés pour établir vos devis sans ressaisie.</p>
+          <ul class="tags tags--night"><li>Devis</li><li>Métrés</li><li>Validation client</li></ul>
+        </article>
+        <article class="aud rv" style="--d:.12s">
+          <p class="aud-k">Agents immobiliers et promoteurs</p>
+          <h3>Donner à voir un bien, même sur plan.</h3>
+          <p>Présentez un programme en VEFA, un potentiel de rénovation ou plusieurs variantes d'aménagement en 3D.</p>
+          <ul class="tags tags--night"><li>VEFA</li><li>Mise en valeur</li><li>Variantes</li></ul>
+        </article>
+        <article class="aud rv" style="--d:.18s">
+          <p class="aud-k">Architectes d'intérieur et décorateurs</p>
+          <h3>Tester une ambiance en quelques clics.</h3>
+          <p>Composez les aménagements, essayez matériaux et couleurs, puis partagez des planches lisibles avec vos clients.</p>
+          <ul class="tags tags--night"><li>Ambiances</li><li>Planches</li><li>Mobilier</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="sheet sheet--paper" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-grid">
+      <div class="sec-head rv">
+        <p class="eyebrow">Questions fréquentes</p>
+        <h2 id="faq-title">Ce qu'on nous demande le plus.</h2>
+      </div>
+      <div class="faq-list rv" style="--d:.08s">
+        <details name="faq" open>
+          <summary>Faut-il savoir dessiner des plans pour utiliser BVM PLAN 3D&nbsp;?</summary>
+          <p class="faq-a">Non. Les murs se tracent directement à l'écran, avec une accroche sur grille. Les cotes, les surfaces et la maquette 3D sont générées automatiquement. Les professionnels gardent la main sur les épaisseurs, les hauteurs et les dimensions exactes.</p>
+        </details>
+        <details name="faq">
+          <summary>Les surfaces calculées ont-elles une valeur officielle&nbsp;?</summary>
+          <p class="faq-a">Elles servent à concevoir, à comparer et à chiffrer. Pour une vente ou une location, la surface Loi Carrez ou la surface habitable doit faire l'objet d'un mesurage dédié, idéalement réalisé par un diagnostiqueur.</p>
+        </details>
+        <details name="faq">
+          <summary>Sur quels appareils fonctionne l'application&nbsp;?</summary>
+          <p class="faq-a">BVM PLAN 3D est pensée pour le navigateur, sur ordinateur comme sur tablette, sans installation.</p>
+        </details>
+        <details name="faq">
+          <summary>Peut-on présenter un projet à un client&nbsp;?</summary>
+          <p class="faq-a">Oui. Le dossier de projet rassemble le plan coté, les vues 3D, les finitions et le tableau des surfaces. Vous pouvez aussi comparer plusieurs variantes d'un même projet.</p>
+        </details>
+        <details name="faq">
+          <summary>Quand l'application sera-t-elle disponible&nbsp;?</summary>
+          <p class="faq-a">BVM PLAN 3D est en cours de développement. L'accès anticipé ouvre progressivement&nbsp;: inscrivez-vous pour tester les premières versions et être prévenu des nouveautés.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ACCÈS ANTICIPÉ ============ -->
+  <section class="sheet sheet--night" id="acces" aria-labelledby="acces-title">
+    <div class="wrap cta-grid">
+      <div class="cta-copy rv">
+        <p class="eyebrow">Accès anticipé</p>
+        <h2 id="acces-title">Testez BVM PLAN 3D parmi les premiers.</h2>
+        <p>Laissez vos coordonnées et votre profil. Nous vous contactons dès l'ouverture des premières places.</p>
+        <ul class="checks">
+          <li>Accès aux premières versions de l'application</li>
+          <li>Un échange direct avec l'équipe qui la développe</li>
+          <li>Vos retours orientent les prochaines fonctionnalités</li>
+        </ul>
+      </div>
+
+      <form class="form rv" id="acces-form" novalidate data-endpoint="" style="--d:.08s">
+        <div class="row2">
+          <div class="field">
+            <label for="f-nom">Nom et prénom</label>
+            <input id="f-nom" name="nom" type="text" autocomplete="name" required aria-describedby="f-nom-err">
+            <p class="err" id="f-nom-err">Indiquez votre nom.</p>
+          </div>
+          <div class="field">
+            <label for="f-email">E-mail</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="f-email-err">
+            <p class="err" id="f-email-err">Indiquez une adresse e-mail valide, par exemple nom@domaine.fr.</p>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-profil">Vous êtes</label>
+          <select id="f-profil" name="profil" required aria-describedby="f-profil-err">
+            <option value="">Choisir votre profil</option>
+            <option>Particulier</option>
+            <option>Artisan ou entreprise du bâtiment</option>
+            <option>Agent immobilier ou promoteur</option>
+            <option>Architecte ou architecte d'intérieur</option>
+            <option>Autre</option>
+          </select>
+          <p class="err" id="f-profil-err">Choisissez votre profil.</p>
+        </div>
+        <div class="field">
+          <label for="f-projet">Votre projet <span class="opt">(facultatif)</span></label>
+          <textarea id="f-projet" name="projet" rows="3" placeholder="Construction, rénovation, programme immobilier…"></textarea>
+        </div>
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="check" for="f-rgpd"><input id="f-rgpd" name="consentement" type="checkbox" required><span>J'accepte d'être recontacté au sujet de BVM PLAN 3D.</span></label>
+        <button class="btn btn--primary btn--block" type="submit">Demander mon accès <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- ============ CARTOUCHE ============ -->
+<footer class="ftr">
+  <div class="wrap">
+    <div class="cartouche">
+      <div class="ct-brand">
+        <a class="brand" href="#top" aria-label="BVM PLAN 3D, retour en haut de page">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27.3 9.5 16 16 4.7 9.5Z" fill="#19B5E8"/><path d="M16 16 27.3 9.5v13L16 29Z" fill="#E8F0F2" fill-opacity=".16" stroke="#E8F0F2" stroke-width="1.2" stroke-linejoin="round"/><path d="M4.7 9.5 16 16v13L4.7 22.5Z" fill="none" stroke="#E8F0F2" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          <span class="brand-word"><b>BVM</b><span>PLAN 3D</span></span>
+        </a>
+        <p>Du premier trait à la maison en 3D.</p>
+      </div>
+      <dl class="ct-grid">
+        <div><dt>Projet</dt><dd>BVM PLAN 3D</dd></div>
+        <div><dt>Objet</dt><dd>Conception de maisons en 2D et 3D</dd></div>
+        <div><dt>Porteur</dt><dd>BVM · Bourgoin-Jallieu (38)</dd></div>
+        <div><dt>Statut</dt><dd>En développement</dd></div>
+        <div><dt>Indice</dt><dd>A</dd></div>
+        <div><dt>Date</dt><dd>2026</dd></div>
+      </dl>
+    </div>
+    <div class="ftr-bottom">
+      <ul>
+        <li><a href="#concept">Concept</a></li>
+        <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+        <li><a href="#materiaux">Matériaux</a></li>
+        <li><a href="#acces">Accès anticipé</a></li>
+      </ul>
+      <p>© 2026 BVM PLAN 3D</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

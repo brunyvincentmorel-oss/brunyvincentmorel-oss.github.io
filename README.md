@@ -11,4 +11,14 @@ GitHub Pages, en plus de la copie déjà présente dans le dossier de l'app elle
 Sans ce fichier ici, l'app affichait une erreur inoffensive mais gênante à chaque
 connexion.
 
-Ce dépôt n'héberge aucune page, aucune donnée, et n'est lié à aucun autre projet.
+En dehors du dossier `bvm-plan-3d/` (voir ci-dessous), ce dépôt n'héberge aucune page,
+aucune donnée, et n'est lié à aucun autre projet.
+
+## Site vitrine BVM PLAN 3D
+
+Le dossier `bvm-plan-3d/` contient le site de présentation de l'application BVM PLAN 3D
+(HTML/CSS/JS statique, Three.js chargé depuis cdnjs). Il est indépendant de PROLIFIC et
+ne touche pas à `firebase-messaging-sw.js`.
+
+- Formulaire d'accès anticipé : renseigner l'attribut `data-endpoint` du formulaire
+  (`bvm-plan-3d/index.html`, ex. une URL Formspree) pour activer l'envoi.
